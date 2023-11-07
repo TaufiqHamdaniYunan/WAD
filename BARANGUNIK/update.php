@@ -1,0 +1,122 @@
+<?php
+// Mengecek koneksi database
+$conn = mysqli_connect('localhost', 'root', '', 'UniqueItemsDB');
+if (!$conn) {
+    die("Koneksi gagal: " . mysqli_connect_error());
+}
+
+// Mendeklarasikan variabel $id
+$id = $_GET['id'];
+
+// Melakukan query untuk mengambil data barang berdasarkan ID
+$query = "SELECT * FROM UniqueItems WHERE item_id = $id";
+$result = mysqli_query($conn, $query);
+
+$row = mysqli_fetch_assoc($result);
+
+if (isset($_POST['update'])) {
+    $item_name = $_POST['item_name'];
+    $item_description = $_POST['item_description'];
+    $item_category = $_POST['item_category'];
+    $item_condition = $_POST['item_condition'];
+    $item_price = $_POST['item_price'];
+    $item_owner = $_POST['item_owner'];
+    $item_image_url = $_POST['item_image_url'];
+    $item_location = $_POST['item_location'];
+
+    $updateQuery = "UPDATE UniqueItems SET 
+                    item_name = '$item_name',
+                    item_description = '$item_description',
+                    item_category = '$item_category',
+                    item_condition = '$item_condition',
+                    item_price = $item_price,
+                    item_owner = '$item_owner',
+                    item_image_url = '$item_image_url',
+                    item_location = '$item_location'
+                    WHERE item_id = $id";
+
+    if (mysqli_query($conn, $updateQuery)) {
+        echo "
+            <script>
+                alert('Data berhasil diubah !');
+                document.location.href = 'index.php';
+            </script>
+        ";
+    } else {
+        echo "
+            <script>
+                alert('Data gagal diubah ! silahkan ulangi');
+            </script>
+        ";
+    }
+}
+
+
+?>
+
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+
+    <div class="max-w-3xl mx-auto bg-white p-6 rounded shadow mt-4">
+        <h1 class="text-2xl font-semibold mb-4">Tambah Barang</h1>
+        <form action="" method="post" class="space-y-4" onsubmit="return confirmUpdate();">
+            <div>
+                <label for="item_name" class="block">Nama Barang:</label>
+                <input type="text" name="item_name" required class="w-full p-2 border border-gray-300 rounded" value="<?= $row['item_name']; ?>">
+            </div>
+
+            <div>
+                <label for="item_description" class="block">Deskripsi Barang:</label>
+                <textarea name="item_description" rows="4" required class="w-full p-2 border border-gray-300 rounded"><?= $row['item_description'];  ?></textarea>
+            </div>
+
+            <div>
+                <label for="item_category" class="block">Kategori Barang:</label>
+                <input type="text" name="item_category" required class="w-full p-2 border border-gray-300 rounded" value="<?= $row['item_category']; ?>">
+            </div>
+
+            <div>
+                <label for="item_condition" class="block">Kondisi Barang:</label>
+                <input type="text" name="item_condition" required class="w-full p-2 border border-gray-300 rounded" value="<?= $row['item_condition']; ?>">
+            </div>
+
+            <div>
+                <label for="item_price" class="block">Harga Barang:</label>
+                <input type="number" name="item_price" required class="w-full p-2 border border-gray-300 rounded" value="<?= $row['item_price']; ?>">
+            </div>
+
+            <div>
+                <label for="item_owner" class="block">Pemilik Barang :</label>
+                <input type="text" name="item_owner" required class="w-full p-2 border border-gray-300 rounded" value="<?= $row['item_owner']; ?>">
+            </div>
+
+            <div>
+                <label for="item_image_url" class="block">URL Gambar Barang:</label>
+                <input type="text" name="item_image_url" required class="w-full p-2 border border-gray-300 rounded" value="<?= $row['item_image_url']; ?>">
+            </div>
+
+            <div>
+                <label for="item_location" class="block">Lokasi Barang:</label>
+                <input type="text" name="item_location" required class="w-full p-2 border border-gray-300 rounded" value="<?= $row['item_location']; ?>">
+            </div>
+
+            <div>
+                <input type="submit" name="update" value="Update Barang" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 cursor-pointer">
+            </div>
+        </form>
+    </div>
+    
+</body>
+<script>
+    function confirmUpdate() {
+        return confirm("Apakah Anda yakin ingin mengubah data?");
+    }
+</script>
+</html>
